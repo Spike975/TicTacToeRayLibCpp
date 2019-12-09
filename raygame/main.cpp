@@ -10,7 +10,6 @@
 ********************************************************************************************/
 
 #include <iostream>
-#include "raylib.h"
 #include "player.h"
 
 int main()
@@ -19,22 +18,40 @@ int main()
 	//--------------------------------------------------------------------------------------
 	int screenWidth = 600;
 	int screenHeight = 600;
+	bool playerOne = true;
+	bool win = false;
+	bool start = true;
+	int startPhase = 0;
+	int currPlayer;
 
-	int board[3][3] = { {0,0,0}, {0,0,0}, {0,0,0}};
+	Player * one = new Player();
+	Player * two = new Player();
+	one->score = 0;
+	two->score = 0;
+	one->color = RAYWHITE;
+	two->color = RAYWHITE;
+
+	int ** board = new int*[3];
+	for (int i = 0; i < 3; i++) {
+			board[i] = new int[3];
+	}
+	for (int i = 0; i < 3; i++) {
+		for (int x = 0; x < 0; x++) {
+			board[i][x] = 0;
+		}
+	}
+	//The area for the boxes of the board
 	Rectangle checkers[3][3];
 	for (int i = 0; i < 3; i++) {
 		for(int x = 0; x < 3; x++){
-			checkers[i][x].x = 40 + (173 * i);
-			checkers[i][x].y = 40 + (173 * x);
-			checkers[i][x].height = 213 + (173 * i);
-			checkers[i][x].width = 213 + (173 * x);
+			checkers[i][x].x =(float) 40 + (173 * x);
+			checkers[i][x].y = (float)40 + (173 * i);
+			checkers[i][x].height = (float)173;
+			checkers[i][x].width = (float)173;
 		}
 	}
 
-	InitWindow(screenWidth, screenHeight, "Basic Tic Tac Toe");
-	Color p1 = BLACK;
-	Color p2;
-	bool start = false;
+	InitWindow(screenWidth, screenHeight, "Basic Tic-Tac-Toe");
 	SetTargetFPS(60);
 	//--------------------------------------------------------------------------------------
 
@@ -45,73 +62,205 @@ int main()
 		//----------------------------------------------------------------------------------
 		// TODO: Update your variables here
 		//----------------------------------------------------------------------------------
+		//Resets game
 		if (IsKeyPressed(KEY_R)) {
 			for (int i = 0; i < 3; i++) {
 				for (int x = 0; x < 3; x++) {
 					board[i][x] = 0;
 				}
 			}
+			playerOne = true;
+			win = false;
 		}
+		//Changes the turn of the player
+		if (!win) {
+			if (playerOne) {
+				DrawText("Turn: Player One", 200, 0, 20, BLACK);
+				currPlayer = 1;
+			}
+			else {
+				DrawText("Turn: Player Two", 200, 0, 20, BLACK);
+				currPlayer = -1;
+			}
+		}
+		//Makes sure the board can't be chaned after someone won
+		else {
+			currPlayer = 0;
+		}
+
 		// Draw
 		//----------------------------------------------------------------------------------
 		BeginDrawing();
 		ClearBackground(RAYWHITE);
 
-		DrawRectangleLines(40, 40, 520, 520, BLACK);
-		DrawLine(213, 40, 213, 560, BLACK);
-		DrawLine(40, 213, 560, 213, BLACK);
-		DrawLine(387, 40, 387, 560, BLACK);
-		DrawLine(40, 387, 560, 387, BLACK);
-		DrawText("Player 1: ", 0, 0, 20, BLACK);
-		DrawText("Player 2: ", 450, 0, 20, BLACK);
-
-		Rectangle first;
-		first.x = 40;
-		first.y = 40;
-		first.width = 173;
-		first.height = 173;
+		//Draws the board
+		drawGrid();
 		
-		for (int i = 0; i < 3; i++) {
-			for (int x = 0; x < 3; x++) {
-				if (board[i][x] == 1) {
-					DrawCircleLines((40+(174*i)) + (174 / 2), (40 + (174 * x)) + (174 / 2), (174 / 2) - 5, p1);
-				}
-				else if (board[i][x] == -1) {
-					DrawLine((52 + (173*i)), (52 + (173 * i)), (200 + (173*x)), (200 + (173 * x)), p1);
-					DrawLine((52 + (173 * i)), (200 + (173 * x)), (200 + (173 * x)), (52 + (173 * i)), p1);
-				}
-			}
-		}
-		if (customCollision(GetMousePosition(),first)) {
-			if(IsMouseButtonPressed(MOUSE_LEFT_BUTTON)){
-				if(board[0][0] == 0){
-					board[0][0] = 1;
-				}
-			}
-			if (IsMouseButtonPressed(MOUSE_RIGHT_BUTTON)) {
-				if (board[0][0] == 0) {
-					board[0][0] = -1;
-				}
-			}
-		}
-		if (start) {
-			DrawRectangle(149,49,300,450,BLACK);
-			DrawRectangle(150, 50, 298, 448,RAYWHITE);
-			DrawText("How many players:", 200, 75, 20, BLACK);
-			DrawRectangle(200,145,100,40,GRAY);
-			DrawText("1 Player", 210, 155, 20, BLACK);
-			DrawRectangle(200,175,130,40,GRAY);
-			DrawText("2 Players", 210, 185, 20, BLACK);
-		}
+		//Draws the scores of the players
+		DrawText(FormatText("Player 1: %01i", one->score), 0, 0, 20, one->color);
+		DrawText(FormatText("Player 2: %01i", two->score), 450, 0, 20, two->color);
 
+		//Draws the shapes
+		drawShapes(board,one->color,two->color);
+		//Initial Startup for color pick
+		if (start) {
+			Rectangle Blue;
+			Blue.x = 210;
+			Blue.y = 260;
+			Blue.width = 70;
+			Blue.height = 70;
+			Rectangle Red;
+			Red.x = 320;
+			Red.y = 260;
+			Red.width = 70;
+			Red.height = 70;
+			Rectangle Black;
+			Black.x = 210;
+			Black.y = 360;
+			Black.width = 70;
+			Black.height = 70;
+			Rectangle Green;
+			Green.x = 320;
+			Green.y = 360;
+			Green.width = 70;
+			Green.height = 70;
+			DrawRectangle(150, 130, 300, 350, LIGHTGRAY);
+			if (startPhase == 0) {
+				DrawText("Player 1", 260, 150, 20, BLACK);
+				if (customCollision(GetMousePosition(),Blue)) {
+					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+						one->color = BLUE;
+						startPhase++;
+					}
+				}
+				if (customCollision(GetMousePosition(), Red)) {
+					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+						one->color = RED;
+						startPhase++;
+					}
+				}
+				if (customCollision(GetMousePosition(), Black)) {
+					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+						one->color = BLACK;
+						startPhase++;
+					}
+				}
+				if (customCollision(GetMousePosition(), Green)) {
+					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+						one->color = DARKGREEN;
+						startPhase++;
+					}
+				}
+			}
+			else if (startPhase == 1) {
+				DrawText("Player 2", 260, 150, 20, BLACK);
+				if (!colorCompare(one->color, BLUE)) {
+					if (customCollision(GetMousePosition(), Blue)) {
+						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+							two->color = BLUE;
+							startPhase++;
+						}
+					}
+				}
+				if (!colorCompare(one->color, RED)) {
+					if (customCollision(GetMousePosition(), Red)) {
+						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+							two->color = RED;
+							startPhase++;
+						}
+					}
+				}
+				if (!colorCompare(one->color, BLACK)) {
+					if (customCollision(GetMousePosition(), Black)) {
+						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+							two->color = BLACK;
+							startPhase++;
+						}
+					}
+				}
+				if (!colorCompare(one->color, DARKGREEN)) {
+					if (customCollision(GetMousePosition(), Green)) {
+						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+							two->color = DARKGREEN;
+							startPhase++;
+						}
+					}
+				}
+			}
+			else {
+				start = false;
+			}
+			
+			DrawText("Choose Color:", 230, 210, 20, BLACK);
+			
+			if (!colorCompare(one->color,BLUE)) {
+				DrawRectangleRec(Blue,BLUE);
+			}
+			if (!colorCompare(one->color, RED)) {
+				DrawRectangleRec(Red, RED);
+			}
+			if (!colorCompare(one->color, BLACK)) {
+				DrawRectangleRec(Black, BLACK);
+			}
+			if (!colorCompare(one->color, DARKGREEN)) {
+				DrawRectangleRec(Green, DARKGREEN);
+			}
+		}
+		//Main loop for game
+		else {
+			for (int i = 0; i < 3; i++) {
+				for (int x = 0; x < 3; x++) {
+					if (customCollision(GetMousePosition(), checkers[i][x])) {
+						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+							if (board[i][x] == 0) {
+								board[i][x] = currPlayer;
+								playerOne = !playerOne;
+							}
+						}
+					}
+				}
+			}
+			//Checks board to see if Player 1 won
+			if (winCondition(board) == 1) {
+				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
+				DrawText("Player One Wins!", 210, 210, 20, BLACK);
+				DrawText("Press R to reset game", 180, 280, 20, BLACK);
+				if (!win) {
+					one->score++;
+					win = true;
+				}
+			}
+			//Checks board to see if Player 2 won
+			else if (winCondition(board) == -1) {
+				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
+				DrawText("Player Two Wins!", 210, 210, 20, BLACK);
+				DrawText("Press R to reset game", 180, 280, 20, BLACK);
+				if (!win) {
+					two->score++;
+					win = true;
+				}
+			}
+			//Checks board to see if no one won
+			else if (noWin(board)) {
+				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
+				DrawText("Looks like a stalemate.", 185, 210, 20, BLACK);
+				DrawText("Press R to reset game", 190, 280, 20, BLACK);
+			}
+		}
 		EndDrawing();
 		//----------------------------------------------------------------------------------
 	}
 
 	// De-Initialization
-	//--------------------------------------------------------------------------------------   
+	//--------------------------------------------------------------------------------------
 	CloseWindow();        // Close window and OpenGL context
 	//--------------------------------------------------------------------------------------
-
+	//Deleting
+	for (int i = 0; i < 3; ++i) {
+		delete[] board[i];
+	}
+	delete[] board;
+	delete one;
+	delete two;
 	return 0;
 }
