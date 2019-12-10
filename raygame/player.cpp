@@ -6,22 +6,22 @@ bool customCollision(Vector2 v, Rectangle r) {
 	}
 	return false;
 }
-void drawGrid() {
-	DrawRectangleLines(40, 40, 520, 520, BLACK);
-	DrawLine(213, 40, 213, 560, BLACK);
-	DrawLine(40, 213, 560, 213, BLACK);
-	DrawLine(387, 40, 387, 560, BLACK);
-	DrawLine(40, 387, 560, 387, BLACK);
+void drawGrid(Rectangle rec[3][3]) {
+	for (int i = 0; i < 3; i++) {
+		for (int x = 0; x < 3; x++) {
+			DrawRectangleLines((int)rec[i][x].x, (int)rec[i][x].y, (int)rec[i][x].width, (int)rec[i][x].height, BLACK);
+		}
+	}
 }
 void drawShapes(int * board[3], Color p1, Color p2) {
 	for (int i = 0; i < 3; i++) {
 		for (int x = 0; x < 3; x++) {
 			if (board[i][x] == 1) {
-				DrawCircleLines((40 + (174 * x)) + (174 / 2), (40 + (174 * i)) + (174 / 2), (174 / 2) - 5, p1);
+				DrawCircleLines((GetScreenWidth() / 4) + ((GetScreenWidth() * 3 / 4) / 3 * x), (GetScreenWidth() / 4) + ((GetScreenWidth() * 3 / 4) / 3 * i), (GetScreenWidth() / 8) - 5, p1);
 			}
 			else if (board[i][x] == -1) {
-				DrawLine((52 + (173 * x)), (52 + (173 * i)), (200 + (173 * x)), (200 + (173 * i)), p2);
-				DrawLine((200 + (173 * x)), (52 + (173 * i)), (52 + (173 * x)), (200 + (173 * i)), p2);
+				DrawLine((GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * x), (GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * i), (GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * x) + ((GetScreenWidth() * 3 / 4) / 3), (GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * i) + ((GetScreenWidth() * 3 / 4) / 3), p2);
+				DrawLine((GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * x) + ((GetScreenWidth() * 3 / 4) / 3), (GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * i), (GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * x), (GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * i) + ((GetScreenWidth() * 3 / 4) / 3), p2);
 			}
 		}
 	}

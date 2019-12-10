@@ -22,6 +22,6 @@ bool customCollision(Vector2, Rectangle);
 bool zeroedBoard(int * board[3]);
 int winCondition(int * board[3]);
 bool noWin(int * board[3]);
-void drawGrid();
+void drawGrid(Rectangle rec[3][3]);
 void drawShapes(int * board[3], Color p1, Color p2);
 bool colorCompare(Color one, Color two);

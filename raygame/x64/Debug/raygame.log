@@ -1,2 +1,3 @@
-﻿  player.cpp
+﻿  main.cpp
+c:\users\s199026\source\repos\tictactoeraylibcpp\raygame\main.cpp(30): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
   raygame.vcxproj -> C:\Users\s199026\source\repos\TicTacToeRayLibCpp\x64\Debug\raygame.exe

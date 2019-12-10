@@ -15,8 +15,18 @@ int main()
 {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	int screenWidth = 600;
-	int screenHeight = 600;
+	int screen = 0;
+	std::cout << "Please enter a size of the  screen(Recomended 600)\n";
+	std::cin >> screen;
+
+	if (screen < 500) {
+		std::cout << "Size to small... Auto update will incur\n";
+		screen = 500;
+	}
+	else if (screen > 1000) {
+		std::cout << "Size to large... Auto update will incur\n";
+		screen = 1000;
+	}
 	srand(time(NULL));
 	bool noPlayer = false;
 	bool playerChose = false;
@@ -60,16 +70,16 @@ int main()
 	}
 	//The area for the boxes of the board
 	Rectangle checkers[3][3];
+
+	InitWindow(screen, screen, "Basic Tic-Tac-Toe");
 	for (int i = 0; i < 3; i++) {
 		for(int x = 0; x < 3; x++){
-			checkers[i][x].x =(float) 40 + (173 * x);
-			checkers[i][x].y = (float)40 + (173 * i);
-			checkers[i][x].height = (float)173;
-			checkers[i][x].width = (float)173;
+			checkers[i][x].x = (float)(GetScreenWidth() / 8) + ((GetScreenWidth() * 3 / 4) / 3 * x);
+			checkers[i][x].y = (float)(GetScreenHeight() / 8) + ((GetScreenHeight() * 3 / 4) / 3 * i);
+			checkers[i][x].height = (float)(GetScreenWidth() * 3 / 4) / 3;
+			checkers[i][x].width = (float)(GetScreenHeight() * 3 / 4) / 3;
 		}
 	}
-
-	InitWindow(screenWidth, screenHeight, "Basic Tic-Tac-Toe");
 	SetTargetFPS(60);
 	//--------------------------------------------------------------------------------------
 	
@@ -81,7 +91,7 @@ int main()
 		// TODO: Update your variables here
 		//----------------------------------------------------------------------------------
 		//Resets game
-		if (IsKeyPressed(KEY_R)) {
+		if (IsKeyPressed(KEY_R)&&win) {
 			for (int i = 0; i < 3; i++) {
 				for (int x = 0; x < 3; x++) {
 					board[i][x] = 0;
@@ -104,24 +114,48 @@ int main()
 				std::cout << std::endl;
 			}
 		}
+		if (IsKeyPressed(KEY_GRAVE)) {
+			start = true;
+			playerChose = false;
+			for (int i = 0; i < 3; i++) {
+				for (int x = 0; x < 3; x++) {
+					board[i][x] = 0;
+				}
+			}
+			one->color = RAYWHITE;
+			two->color = RAYWHITE;
+			stalemate = 0;
+			one->score = 0;
+			two->score = 0;
+			ai->score = 0;
+			ai2->score = 0;
+			ai->turnReset();
+			ai2->turnReset();
+			clicked = false;
+			randDone = false;
+			first = false;
+			playerOne = true;
+			win = false;
+			startPhase = 0;
+		}
 		//Changes the turn of the player
 		if (!win) {
 			
 			if (playerOne) {
 				if (!noPlayer) {
-					DrawText("Turn: Player One", 200, 0, 20, BLACK);
+					DrawText("Turn: Player One", (GetScreenHeight() / 2) - 100, 0, 20, BLACK);
 				}
 				else {
-					DrawText("Turn: AI.2", 200, 0, 20, BLACK);
+					DrawText("Turn: AI.2", (GetScreenHeight() / 2) - 100, 0, 20, BLACK);
 				}
 				currPlayer = 1;
 			}
 			else {
 				if (!onePlayer) {
-					DrawText("Turn: Player Two", 200, 0, 20, BLACK);
+					DrawText("Turn: Player Two", (GetScreenHeight() / 2) - 100, 0, 20, BLACK);
 				}
 				else {
-					DrawText("Turn: AI", 200, 0, 20, BLACK);
+					DrawText("Turn: AI", (GetScreenHeight() / 2) - 100, 0, 20, BLACK);
 				}
 				currPlayer = -1;
 			}
@@ -137,64 +171,66 @@ int main()
 		ClearBackground(RAYWHITE);
 
 		//Draws the board
-		drawGrid();
+		drawGrid(checkers);
 		
 		//Initial Startup for color pick and player check
 		if (start) {
 			Rectangle Blue;
-			Blue.x = 210;
-			Blue.y = 260;
+			Blue.x =(float) (GetScreenWidth() / 2) - 70;
+			Blue.y = (float)(GetScreenHeight() / 2) - 40;
 			Blue.width = 70;
 			Blue.height = 70;
 			Rectangle Red;
-			Red.x = 320;
-			Red.y = 260;
+			Red.x = (float)(GetScreenWidth() / 2) + 20;
+			Red.y = (float)(GetScreenHeight() / 2) - 40;
 			Red.width = 70;
 			Red.height = 70;
 			Rectangle Black;
-			Black.x = 210;
-			Black.y = 360;
+			Black.x = (float)(GetScreenWidth() / 2) - 70;
+			Black.y = (float)(GetScreenHeight() / 2) + 50;
 			Black.width = 70;
 			Black.height = 70;
 			Rectangle Green;
-			Green.x = 320;
-			Green.y = 360;
+			Green.x = (float)(GetScreenWidth() / 2) + 20;
+			Green.y = (float)(GetScreenHeight() / 2) + 50;
 			Green.width = 70;
 			Green.height = 70;
-			DrawRectangle(150, 130, 300, 350, LIGHTGRAY);
+			DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
 			if (!playerChose) {
 				Rectangle p1;
-				p1.x = 240;
-				p1.y = 200;
+				p1.x = (float)(GetScreenWidth() / 2) - 60;
+				p1.y = (float)(GetScreenHeight() / 2) - 100;
 				p1.width = 135;
 				p1.height = 40;
 				Rectangle p2;
-				p2.x = 235;
-				p2.y = 250;
+				p2.x = (float)(GetScreenWidth() / 2) - 65;
+				p2.y = (float)(GetScreenHeight() / 2) - 50;
 				p2.width = 150;
 				p2.height = 40;
 				Rectangle p3;
-				p3.x = 230;
-				p3.y = 300;
+				p3.x = (float)(GetScreenWidth() / 2) - 70;
+				p3.y = (float)(GetScreenHeight() / 2);
 				p3.width = 160;
 				p3.height = 40;
 				DrawRectangleRec(p1,GRAY);
 				DrawRectangleRec(p2,GRAY);
 				DrawRectangleRec(p3,GRAY);
-				DrawText("How many Players:", 210, 150, 20, BLACK);
-				DrawText("One Player.", 250, 210, 20, BLACK);
-				DrawText("Two Players.", 245, 260, 20, BLACK);
-				DrawText("Zero Players.", 240, 310, 20, BLACK);
+				DrawText("How many Players:", (GetScreenHeight() / 2) - 90, (GetScreenHeight() / 2) - 150, 20, BLACK);
+				DrawText("One Player.", (GetScreenHeight() / 2) - 50, (GetScreenHeight() / 2) - 90, 20, BLACK);
+				DrawText("Two Players.", (GetScreenHeight() / 2) - 55, (GetScreenHeight() / 2) - 40, 20, BLACK);
+				DrawText("Zero Players.", (GetScreenHeight() / 2) - 60, (GetScreenHeight() / 2) + 10, 20, BLACK);
 				if (customCollision(GetMousePosition(),p1)) {
 					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 						onePlayer = true;
 						playerChose = true;
+						noPlayer = false;
 					}
 				}
 				else if (customCollision(GetMousePosition(), p2)) {
 					if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 						onePlayer = false;
 						playerChose = true;
+						noPlayer = false;
 					}
 				}
 				else if (customCollision(GetMousePosition(), p3)) {
@@ -208,7 +244,7 @@ int main()
 			}
 			else if (onePlayer && playerChose && !noPlayer) {
 				if (startPhase == 0) {
-					DrawText("Player 1", 260, 150, 20, BLACK);
+					DrawText("Player 1", (GetScreenWidth() / 2) - 40, (GetScreenHeight() / 2) - 150, 20, BLACK);
 					if (customCollision(GetMousePosition(), Blue)) {
 						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 							one->color = BLUE;
@@ -252,7 +288,7 @@ int main()
 			}
 			else if(!onePlayer && playerChose && !noPlayer) {
 				if (startPhase == 0) {
-					DrawText("Player 1", 260, 150, 20, BLACK);
+					DrawText("Player 1", (GetScreenHeight() / 2) - 40, (GetScreenHeight() / 2) - 150, 20, BLACK);
 					if (customCollision(GetMousePosition(), Blue)) {
 						if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
 							one->color = BLUE;
@@ -279,7 +315,7 @@ int main()
 					}
 				}
 				else if (startPhase == 1) {
-					DrawText("Player 2", 260, 150, 20, BLACK);
+					DrawText("Player 2", (GetScreenWidth() / 2) - 40, (GetScreenHeight() / 2) - 150, 20, BLACK);
 					if (!colorCompare(one->color, BLUE)) {
 						if (customCollision(GetMousePosition(), Blue)) {
 							if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -316,7 +352,7 @@ int main()
 				else {
 					start = false;
 				}
-				DrawText("Choose Color:", 230, 210, 20, BLACK);
+				DrawText("Choose Color:", (GetScreenWidth() / 2) - 70, (GetScreenHeight() / 2) - 90, 20, BLACK);
 
 				if (!colorCompare(one->color, BLUE)) {
 					DrawRectangleRec(Blue, BLUE);
@@ -350,9 +386,9 @@ int main()
 			}
 			//Checks board to see if Player 1 won
 			if (winCondition(board) == 1) {
-				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
-				DrawText("Player One Wins!", 210, 210, 20, BLACK);
-				DrawText("Press R for new game", 190, 280, 20, BLACK);
+				DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
+				DrawText("Player One Wins!", (GetScreenWidth() / 2) - 90, (GetScreenWidth() / 2) - 90, 20, BLACK);
+				DrawText("Press R to reset game", (GetScreenWidth() / 2) - 120, (GetScreenWidth() / 2) - 20, 20, BLACK);
 				if (!win) {
 					one->score++;
 					win = true;
@@ -360,9 +396,9 @@ int main()
 			}
 			//Checks board to see if Player 2 won
 			else if (winCondition(board) == -1) {
-				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
-				DrawText("Player Two Wins!", 210, 210, 20, BLACK);
-				DrawText("Press R for new game", 190, 280, 20, BLACK);
+				DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
+				DrawText("Player Two Wins!", (GetScreenWidth() / 2) - 90, (GetScreenWidth() / 2) - 90, 20, BLACK);
+				DrawText("Press R to reset game", (GetScreenWidth() / 2) - 120, (GetScreenWidth() / 2) - 20, 20, BLACK);
 				if (!win) {
 					two->score++;
 					win = true;
@@ -370,34 +406,32 @@ int main()
 			}
 			//Checks board to see if no one won
 			else if (noWin(board)) {
-				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
-				if (!first) {
-					DrawText("Looks like a stalemate.", 185, 210, 20, BLACK);
-				}
-				DrawText("Press R for new game", 190, 280, 20, BLACK);
-				stalemate++;
+				DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
+				DrawText("Looks like a stalemate.", (GetScreenWidth() / 2) - 115, (GetScreenWidth() / 2) - 90, 20, BLACK);
+				DrawText("Press R to reset game", (GetScreenWidth() / 2) - 120, (GetScreenWidth() / 2) - 20, 20, BLACK);
+				win = true;
 			}
 		}
 		else if (onePlayer && !noPlayer) {
 			//Randomly selects first player
 			if (zeroedBoard(board) && !clicked) {
-				DrawRectangle(150, 130, 300, 350, LIGHTGRAY);
-				DrawText("Who goes First:", 210, 150, 20, BLACK);
+				DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
+				DrawText("Who goes First:", (GetScreenWidth() / 2) - 70, (GetScreenHeight() / 2) - 130, 20, BLACK);
 				if (!randDone) {
 					ran = rand() % 2;
 				}
 				int temp=ran;
 				if (temp == 0) {
-					DrawText("AI",280,260,30,BLACK);
+					DrawText("AI", (GetScreenWidth() / 2) - 10, (GetScreenHeight() / 2) - 40,30,BLACK);
 					playerOne = false;
 					randDone = true;
 				}
 				else if (temp == 1) {
-					DrawText("Player", 250, 260, 30, BLACK);
+					DrawText("Player", (GetScreenWidth() / 2) - 40, (GetScreenHeight() / 2) - 40, 30, BLACK);
 					playerOne = true;
 					randDone = true;
 				}
-				DrawText("Press E to continue",190,340,20,BLACK);
+				DrawText("Press E to continue", (GetScreenWidth() / 2) - 90, (GetScreenHeight() / 2) + 40,20,BLACK);
 				if (IsKeyPressed(KEY_E)) {
 					clicked = true;
 				}
@@ -424,9 +458,9 @@ int main()
 			}
 			//Checks board to see if Player 1 won
 			if (winCondition(board) == 1) {
-				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
-				DrawText("Player One Wins!", 210, 210, 20, BLACK);
-				DrawText("Press R for new game", 190, 280, 20, BLACK);
+				DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
+				DrawText("Player One Wins!", (GetScreenWidth() / 2) - 90, (GetScreenHeight() / 2) - 90, 20, BLACK);
+				DrawText("Press R to reset game", (GetScreenWidth() / 2) - 120, (GetScreenHeight() / 2) - 20, 20, BLACK);
 				if (!win) {
 					one->score++;
 					win = true;
@@ -434,22 +468,20 @@ int main()
 			}
 			//Checks board to see if AI won
 			else if (winCondition(board) == -1) {
-				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
-				DrawText("AI Wins!", 230, 210, 20, BLACK);
-				DrawText("Press R for new game", 190, 280, 20, BLACK);
+				DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
+				DrawText("AI Wins!", (GetScreenWidth() / 2) - 70, (GetScreenWidth() / 2) - 90, 20, BLACK);
+				DrawText("Press R for new game", (GetScreenWidth() / 2) - 110, (GetScreenWidth() / 2) - 20, 20, BLACK);
 				if (!win) {
 					ai->score++;
 					win = true;
 				}
 			}
+			//Checks board to see if no one won
 			else if (noWin(board)) {
-				DrawRectangle(150, 150, 300, 300, LIGHTGRAY);
-				if (!first) {
-					DrawText("Looks like a stalemate.", 185, 210, 20, BLACK);
-				}
+				DrawRectangle((GetScreenWidth() / 2) - 140, (GetScreenHeight() / 2) - 170, 300, 350, LIGHTGRAY);
+				DrawText("Looks like a stalemate.", (GetScreenWidth() / 2) - 115, (GetScreenWidth() / 2) - 90, 20, BLACK);
+				DrawText("Press R to reset game", (GetScreenWidth() / 2) - 120, (GetScreenWidth() / 2) - 20, 20, BLACK);
 				win = true;
-				DrawText("Press R for new game", 190, 280, 20, BLACK);
-				stalemate++;
 			}
 		}
 		else if (noPlayer) {
@@ -537,18 +569,18 @@ int main()
 		drawShapes(board,(!noPlayer)?one->color:ai2->color,(onePlayer)?ai->color:two->color);
 		//Draws the scores of the players
 		if (!noPlayer) {
-			DrawText(FormatText("Player 1: %01i", one->score), 0, 0, 20, one->color);
+			DrawText(FormatText("Player 1: %01i", one->score), 20, 0, 20, one->color);
 		}
 		else {
-			DrawText(FormatText("AI 2: %01i", ai2->score), 0, 0, 20, ai2->color);
+			DrawText(FormatText("AI 2: %01i", ai2->score), 20, 0, 20, ai2->color);
 		}
 		if (!onePlayer) {
-			DrawText(FormatText("Player 2: %01i", two->score), 450, 0, 20, two->color);
+			DrawText(FormatText("Player 2: %01i", two->score), (GetScreenWidth()) - 150, 0, 20, two->color);
 		}
 		else {
-			DrawText(FormatText("AI: %01i", ai->score), 520, 0, 20, ai->color);
+			DrawText(FormatText("AI: %01i", ai->score), (GetScreenWidth()) - 100, 0, 20, ai->color);
 		}
-		DrawText(FormatText("Stalemate %01i", stalemate), 220, 560, 30, BLACK);
+		DrawText(FormatText("Stalemate %01i", stalemate), (GetScreenWidth()/2) - 80, (GetScreenWidth()) - 40, 30, BLACK);
 		EndDrawing();
 		//----------------------------------------------------------------------------------
 	}
