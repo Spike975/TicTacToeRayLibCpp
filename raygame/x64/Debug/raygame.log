@@ -1,3 +1,4 @@
-﻿  main.cpp
-c:\users\s199026\source\repos\tictactoeraylibcpp\raygame\main.cpp(30): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-  raygame.vcxproj -> C:\Users\s199026\source\repos\TicTacToeRayLibCpp\x64\Debug\raygame.exe
+﻿  player.cpp
+c:\users\s199026\source\repos\jacobfirsdoncppassessment\tictactoewithai\raygame\player.cpp(20): warning C4838: conversion from 'int' to 'unsigned char' requires a narrowing conversion
+c:\users\s199026\source\repos\jacobfirsdoncppassessment\tictactoewithai\raygame\player.cpp(29): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  raygame.vcxproj -> C:\Users\s199026\source\repos\JacobFirsdonCppAssessment\TicTacToeWithAI\x64\Debug\raygame.exe

@@ -18,6 +18,7 @@ public:
 private:
 	int turn = 0;
 };
+Color randColor();
 bool customCollision(Vector2, Rectangle);
 bool zeroedBoard(int * board[3]);
 int winCondition(int * board[3]);

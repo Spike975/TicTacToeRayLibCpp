@@ -1,11 +1,13 @@
 #include "player.h"
 
+//A custom collision given a vector 2 and a rectangle
 bool customCollision(Vector2 v, Rectangle r) {
 	if (v.x > r.x && v.y > r.y && v.y < r.y + r.height && v.x < r.x + r.width) {
 		return true;
 	}
 	return false;
 }
+//Draws the grid for the game
 void drawGrid(Rectangle rec[3][3]) {
 	for (int i = 0; i < 3; i++) {
 		for (int x = 0; x < 3; x++) {
@@ -13,6 +15,13 @@ void drawGrid(Rectangle rec[3][3]) {
 		}
 	}
 }
+//Random Colosr
+Color randColor() {
+	Color random = { rand() % 256,rand() % 256, rand() % 256, rand() % 256 };
+	return random;
+}
+
+//Draws the X's and O's on the board
 void drawShapes(int * board[3], Color p1, Color p2) {
 	for (int i = 0; i < 3; i++) {
 		for (int x = 0; x < 3; x++) {
@@ -26,6 +35,7 @@ void drawShapes(int * board[3], Color p1, Color p2) {
 		}
 	}
 }
+//Checks to see if the board is cleared
 bool zeroedBoard(int * board[3]) {
 	int zero = 0;
 	for (int i = 0; i < 3; i++) {
@@ -40,6 +50,7 @@ bool zeroedBoard(int * board[3]) {
 	}
 	return false;
 }
+//Checks to see if anyone has won the game
 int winCondition(int * board[3]) {
 	if (board[0][0] == 1 && board[0][1] == 1 && board[0][2] == 1) {
 		return 1;
@@ -65,6 +76,7 @@ int winCondition(int * board[3]) {
 	else if (board[0][2] == 1 && board[1][1] == 1 && board[2][0] == 1) {
 		return 1;
 	}
+
 	if (board[0][0] == -1 && board[0][1] == -1 && board[0][2] == -1) {
 		return -1;
 	}
@@ -91,6 +103,7 @@ int winCondition(int * board[3]) {
 	}
 	return 0;
 }
+//Check to see if board has any open spaces. If it doesn't it checks to see if anyone won
 bool noWin(int * board[3]) {
 	int zero = 0;
 	for (int i = 0; i < 3; i++) {
@@ -108,12 +121,15 @@ bool noWin(int * board[3]) {
 
 	return false;
 }
+//Custom color comparison (idk if there is an actual way to check if a color is the same as another)
 bool colorCompare(Color one, Color two) {
 	return (one.r == two.r && one.b == two.b && one.g == two.g && one.a == two.a) ? true : false;
 }
 
 
 //AI CODE:
+
+//Checks to see what the best action is to do. If no action is avalible, it will place it in a random free space
 void AI::checkMove(int * board[3]) {
 	int oposite = 0;
 	if (move == 1) {
@@ -315,12 +331,15 @@ void AI::checkMove(int * board[3]) {
 	}
 	turnIncrease();
 }
+//Gets the current turn
 int AI::getTurn() {
 	return turn;
 }
+//Resets current turn
 void AI::turnReset() {
 	turn = 0;
 }
+//Increases the turn
 void AI::turnIncrease() {
 	turn++;
 }
